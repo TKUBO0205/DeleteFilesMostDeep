@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DeleteFilesMostDeep.Properties;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace DeleteFilesMostDeep
 {
@@ -10,27 +11,33 @@ namespace DeleteFilesMostDeep
     {
         static void Main()
         {
-            List<string> result = Resources.ResourceManager.GetString("Extend")
+            var json = File.ReadAllText("config.json"); // ファイル内容をjson変数に格納
+            // Deserialize
+            var obj = JsonSerializer.Deserialize<Setting>(json);
+
+            List<string> result = obj.Extend
                 .Split(',')
                 .ToList()
                 .ConvertAll(a => a);
 
             foreach (var s in result)
             {
-                // ファイル名に「Hoge」を含み、拡張子が「.txt」のファイルを最下層まで検索し取得する
-                string[] stFilePathes = GetFilesMostDeep(Resources.ResourceManager.GetString("Path"), s);
+                string[] stFilePathes = GetFilesMostDeep(Regex.Escape(obj.Path), s);
                 string stPrompt = string.Empty;
 
                 // 取得したファイル名を列挙する
                 foreach (string stFilePath in stFilePathes)
                 {
                     stPrompt += stFilePath + Environment.NewLine;
+                    File.Delete(stFilePath);
                 }
 
                 // 取得したすべてのファイルパスを表示する
                 if (stPrompt != string.Empty)
                 {
-                    File.AppendAllText(@"test.txt", stPrompt + Environment.NewLine);
+                    var logger = NLog.LogManager.GetCurrentClassLogger();
+                    logger.Info(stPrompt + Environment.NewLine);
+
                 }
             }
         }
@@ -74,5 +81,10 @@ namespace DeleteFilesMostDeep
 
             return stReturns;
         }
+    }
+    public class Setting
+    {
+        public string Path { get; set; }
+        public string Extend { get; set; }
     }
 }

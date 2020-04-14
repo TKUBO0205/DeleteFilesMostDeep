@@ -59,23 +59,5 @@ namespace DeleteFilesMostDeep.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   *.adr,*.vin,*.evi,*.res に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Extend {
-            get {
-                return ResourceManager.GetString("Extend", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   C:\toyotaG に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        internal static string Path {
-            get {
-                return ResourceManager.GetString("Path", resourceCulture);
-            }
-        }
     }
 }
